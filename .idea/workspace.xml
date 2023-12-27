@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="c9ce53dc-69f4-46a8-ab93-c0bc15653b47" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/magento.tf" beforeDir="false" afterPath="$PROJECT_DIR$/magento.tf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/magento/main.tf" beforeDir="false" afterPath="$PROJECT_DIR$/modules/magento/main.tf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/magento/scripts/install_magento.sh" beforeDir="false" afterPath="$PROJECT_DIR$/modules/magento/scripts/install_magento.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/magento/variables.tf" beforeDir="false" afterPath="$PROJECT_DIR$/modules/magento/variables.tf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output.tf" beforeDir="false" afterPath="$PROJECT_DIR$/output.tf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/variables.tf" beforeDir="false" afterPath="$PROJECT_DIR$/variables.tf" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="2ZoTrcsa9Iq2yEHqBpxSn2U7kGe" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c9ce53dc-69f4-46a8-ab93-c0bc15653b47" name="Default Changelist" comment="" />
+      <created>1703087632133</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1703087632133</updated>
+      <workItem from="1703087633227" duration="26667000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="507" y="210" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1703682313063">
+      <screen x="0" y="0" width="1536" height="816" />
+    </state>
+    <state x="507" y="210" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.816@0.0.1536.816" timestamp="1703682313063" />
+    <state x="604" y="331" key="NewPhpFileDialog" timestamp="1703431955330">
+      <screen x="0" y="0" width="1536" height="816" />
+    </state>
+    <state x="604" y="331" key="NewPhpFileDialog/0.0.1536.816@0.0.1536.816" timestamp="1703431955330" />
+    <state x="477" y="141" width="581" height="534" key="find.popup" timestamp="1703691099391">
+      <screen x="0" y="0" width="1536" height="816" />
+    </state>
+    <state x="477" y="141" width="581" height="534" key="find.popup/0.0.1536.816@0.0.1536.816" timestamp="1703691099391" />
+  </component>
+</project>

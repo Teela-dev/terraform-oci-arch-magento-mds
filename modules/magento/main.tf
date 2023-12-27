@@ -1,4 +1,4 @@
-## Copyright (c) 2022, Oracle and/or its affiliates. 
+## Copyright (c) 2022, Oracle and/or its affiliates.
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
 resource "tls_private_key" "public_private_key_pair" {
@@ -57,9 +57,9 @@ locals {
   php_script        = "~/install_php74.sh"
   security_script   = "~/configure_local_security.sh"
   create_magento_db = "~/create_magento_db.sh"
-  install_magento   = "~/install_magento.sh" 
-  indexhtml         = "~/index.html"  
-}  
+  install_magento   = "~/install_magento.sh"
+  indexhtml         = "~/index.html"
+}
 
 data "oci_core_subnet" "magento_subnet_ds" {
   count     = var.numberOfNodes > 1 && var.use_shared_storage ? 1 : 0
@@ -255,7 +255,6 @@ resource "oci_file_storage_export" "magentoExport" {
   file_system_id = oci_file_storage_file_system.magentoFilesystem[0].id
   path           = var.magento_shared_working_dir
 }
-
 
 resource "oci_core_instance" "magento" {
   availability_domain = var.availability_domain_name == "" ? lookup(data.oci_identity_availability_domains.ADs.availability_domains[0], "name") : var.availability_domain_name
@@ -824,4 +823,263 @@ resource "oci_load_balancer_backend" "lb_be_magento2plus" {
   drain            = false
   offline          = false
   weight           = 1
+}
+data "template_file" "varnish" {
+  template = file("${path.module}/scripts/varnish.sh")
+
+  vars = {
+    ssh_public_key                  = tls_private_key.public_private_key_pair.public_key_openssh
+  }
+
+}
+
+resource "oci_core_instance" "varnish" {
+  availability_domain = var.availability_domain_name == "" ? data.oci_identity_availability_domains.ADs.availability_domains[var.availability_domain_number]["name"] : var.availability_domain_name
+  compartment_id      = var.compartment_ocid
+  display_name        = ${var.label_prefix}"Varnish"
+  shape               = var.shape
+
+  dynamic "shape_config" {
+    for_each = local.is_flexible_shape ? [1] : []
+    content {
+      memory_in_gbs = var.varnish_memory
+      ocpus = var.varnish_ocpus
+    }
+  }
+
+  create_vnic_details {
+    subnet_id        = var.magento_subnet_id
+    display_name     = "Varnish"
+    assign_public_ip = true
+    hostname_label   = "rabbit"
+  }
+
+  source_details {
+    source_type = "image"
+    source_id   = lookup(data.oci_core_images.InstanceImageOCID5.images[0], "id")
+  }
+
+  metadata = {
+    ssh_authorized_keys = tls_private_key.public_private_key_pair.public_key_openssh
+    user_data           = base64encode(data.template_file.varnish.rendered)
+  }
+
+  defined_tags = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
+}
+
+data "template_file" "rabbitmq" {
+  template = file("${path.module}/scripts/rabbitmq.sh")
+
+  vars = {
+    ssh_public_key                  = tls_private_key.public_private_key_pair.public_key_openssh
+  }
+
+}
+
+resource "oci_core_instance" "rabbitMQ" {
+  availability_domain = var.availability_domain_name == "" ? data.oci_identity_availability_domains.ADs.availability_domains[var.availability_domain_number]["name"] : var.availability_domain_name
+  compartment_id      = var.compartment_ocid
+  display_name        = ${var.label_prefix}"RabbitMQ"
+  shape               = var.shape
+
+  dynamic "shape_config" {
+    for_each = local.is_flexible_shape ? [1] : []
+    content {
+      memory_in_gbs = var.rabbitmq_flex_shape_memory
+      ocpus = var.rabbitmq_flex_shape_ocpus
+    }
+  }
+
+  create_vnic_details {
+    subnet_id        = var.magento_subnet_id
+    display_name     = "RabbitMQ"
+    assign_public_ip = true
+    hostname_label   = "rabbit"
+  }
+
+  source_details {
+    source_type = "image"
+    source_id   = lookup(data.oci_core_images.InstanceImageOCID4.images[0], "id")
+  }
+
+  metadata = {
+    ssh_authorized_keys = tls_private_key.public_private_key_pair.public_key_openssh
+    user_data           = base64encode(data.template_file.rabbitmq.rendered)
+  }
+
+  defined_tags = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
+}
+
+data "template_file" "ELK" {
+  template = file("${path.module}/scripts/elk.sh")
+
+  vars = {
+    elasticsearch_download_url      = var.elasticsearch_download_url
+    kibana_download_url             = var.kibana_download_url
+    logstash_download_url           = var.logstash_download_url
+    elasticsearch_download_version  = var.elasticsearch_download_version
+    kibana_download_version         = var.kibana_download_version
+    logstash_download_version       = var.logstash_download_version
+    KibanaPort                      = var.KibanaPort
+    ESDataPort                      = var.ESDataPort
+    ssh_public_key                  = tls_private_key.public_private_key_pair.public_key_openssh
+  }
+
+}
+
+resource "oci_core_instance" "ELK" {
+  availability_domain = var.availability_domain_name == "" ? data.oci_identity_availability_domains.ADs.availability_domains[var.availability_domain_number]["name"] : var.availability_domain_name
+  compartment_id      = var.compartment_ocid
+  display_name        = ${var.label_prefix}"ELK"
+  shape               = var.elastic_search_shape
+
+  dynamic "shape_config" {
+    for_each = local.is_flexible_shape ? [1] : []
+    content {
+      memory_in_gbs = var.elastic_search_memory
+      ocpus = var.elastic_search_ocpus
+    }
+  }
+
+  create_vnic_details {
+    subnet_id        = var.magento_subnet_id
+    display_name     = "ElasticSearch"
+    assign_public_ip = true
+    hostname_label   = "elk"
+  }
+
+  source_details {
+    source_type = "image"
+    source_id   = lookup(data.oci_core_images.InstanceImageOCID3.images[0], "id")
+  }
+
+  metadata = {
+    ssh_authorized_keys = tls_private_key.public_private_key_pair.public_key_openssh
+    user_data           = base64encode(data.template_file.ELK.rendered)
+  }
+
+  defined_tags = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
+}
+
+resource "oci_core_instance" "magento_admin" {
+  availability_domain = var.availability_domain_name == "" ? lookup(data.oci_identity_availability_domains.ADs.availability_domains[0], "name") : var.availability_domain_name
+  compartment_id      = var.compartment_ocid
+  display_name        = "${var.label_prefix}${var.display_name}Admin"
+  shape               = var.admin_instance_shape
+
+  dynamic "shape_config" {
+    for_each = local.is_flexible_node_shape ? [1] : []
+    content {
+      memory_in_gbs = var.admin_instance_memory
+      ocpus         = var.admin_instance_ocpus
+    }
+  }
+
+  create_vnic_details {
+    subnet_id        = var.magento_subnet_id
+    display_name     = "${var.label_prefix}${var.display_name}1"
+    assign_public_ip = true
+    hostname_label   = "MagentoAdmin"
+  }
+
+
+  metadata = {
+    ssh_authorized_keys = var.ssh_authorized_keys
+    user_data           = data.template_cloudinit_config.cloud_init_admin.rendered
+  }
+
+  source_details {
+    source_id   = lookup(data.oci_core_images.InstanceImageOCID6.images[0], "id")
+    source_type = "image"
+  }
+
+  defined_tags = var.defined_tags
+
+  provisioner "local-exec" {
+    command = "sleep 240"
+  }
+}
+
+data "template_file" "install_magento_admin" {
+  template = file("${path.module}/scripts/install_magento_admin.sh")
+
+  vars = {
+    magento_name               = var.magento_name
+    magento_password           = var.magento_password
+    magento_schema             = var.magento_schema
+    mds_ip                     = var.mds_ip
+    use_shared_storage         = tostring(false)
+    magento_shared_working_dir = var.magento_shared_working_dir
+    mt_ip_address              = local.mt_ip_address
+    public_ip                  = oci_core_public_ip.magento_public_ip_for_single_node[0].ip_address
+    magento_admin_login        = var.magento_admin_login
+    magento_admin_password     = var.magento_admin_password
+    magento_admin_firstname    = var.magento_admin_firstname
+    magento_admin_lastname     = var.magento_admin_lastname
+    magento_admin_email        = var.magento_admin_email
+  }
+}
+
+data "template_cloudinit_config" "cloud_init_admin" {
+  gzip          = true
+  base64_encode = true
+
+  part {
+    filename     = "ainit.sh"
+    content_type = "text/x-shellscript"
+    content      = data.template_file.key_script.rendered
+  }
+}
+
+locals {
+  php_script        = "~/install_php74.sh"
+  security_script   = "~/configure_local_security.sh"
+  create_magento_db = "~/create_magento_db.sh"
+  install_magento   = "~/install_magento_admin.sh"
+  indexhtml         = "~/index.html"
+}
+
+data "template_cloudinit_config" "cloud_init_redis" {
+  gzip          = true
+  base64_encode = true
+
+  part {
+    filename     = "ainit.sh"
+    content_type = "text/x-shellscript"
+    content      = data.template_file.key_script.rendered
+  }
+}
+
+resource "oci_core_instance" "main_redis" {
+  availability_domain =   availability_domain = var.availability_domain_name == "" ? lookup(data.oci_identity_availability_domains.ADs.availability_domains[0], "name") : var.availability_domain_name
+  compartment_id      = var.compartment_ocid
+  display_name        = "${var.redis-prefix}Main"
+  shape               = var.instance_shape
+
+  dynamic "shape_config" {
+    for_each = local.is_flexible_node_shape ? [1] : []
+    content {
+      memory_in_gbs = var.redis_memory
+      ocpus = var.redis_ocpus
+    }
+  }
+
+  create_vnic_details {
+    subnet_id        = magento_subnet.id
+    display_name     = "primaryvnic"
+    assign_public_ip = true
+    hostname_label   = "${var.redis-prefix}Main"
+  }
+
+  source_details {
+    source_type = "image"
+    source_id   = data.oci_core_images.InstanceImageOCID8.images[0].id
+  }
+
+  metadata = {
+    ssh_authorized_keys = var.ssh_public_key
+    user_data = data.template_cloudinit_config.cloud_init_redis.rendered
+  }
+
+  defined_tags = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }

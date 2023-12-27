@@ -65,7 +65,22 @@ variable "flex_shape_ocpus" {
 
 variable "flex_shape_memory" {
   description = "Flex Instance shape Memory (GB)"
-  default = 6
+  default = 8
+}
+
+variable "admin_shape" {
+  description = "Instance Admin shape to use for master instance. "
+  default     = "VM.Standard.E4.Flex"
+}
+
+variable "admin_flex_shape_ocpus" {
+  description = "Flex Admin Instance shape OCPUs"
+  default = 4
+}
+
+variable "admin_flex_shape_memory" {
+  description = "Flex Admin Instance shape Memory (GB)"
+  default = 32
 }
 
 variable "lb_shape" {
@@ -113,7 +128,7 @@ variable "use_shared_storage" {
 
 variable "magento_shared_working_dir" {
   description = "Decide where to store magento data"
-  default     = "/sharedmagento"
+  default     = "/teeelamagento"
 }
 
 variable "label_prefix" {
@@ -196,7 +211,7 @@ variable "admin_password" {
 
 variable "numberOfNodes" {
     description = "Amount of Webservers to deploy"
-    default = 1
+    default = 2
 }
 
 # Dictionary Locals

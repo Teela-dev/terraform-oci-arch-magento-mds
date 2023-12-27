@@ -26,3 +26,7 @@ output "mds_instance_ip" {
   value = module.mds-instance.mysql_db_system.ip_address
   sensitive = true
 }
+
+output "ELK_VM_public_IP" {
+  value = data.oci_core_vnic.elk_vnic.public_ip_address
+}

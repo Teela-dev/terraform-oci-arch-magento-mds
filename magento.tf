@@ -38,4 +38,25 @@ module "oci-arch-magento" {
   bastion_flex_shape_memory = var.bastion_flex_shape_memory
   bastion_service_region    = var.numberOfNodes > 1 ? var.region : ""
   defined_tags              = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
+  elastic_search_ocpus      = var.elastic_search_flex_shape_ocpus
+  elastic_search_memory     = var.elastic_search_flex_shape_memory
+  elastic_search_shape      = var.elastic_search_instance_shape
+  rabbitmq_ocpus            = var.rabbitmq_flex_shape_ocpus
+  rabbitmq_memory           = var.rabbitmq_flex_shape_memory
+  magento_version           = var.magento_version
+  varnish_ocpus             = var.varnish_flex_shape_ocpus
+  varnish_memory            = var.varnish_flex_shape_memory
+  admin_instance_shape      = var.admin_instance_shape
+  admin_instance_ocpus      = var.admin_instance_shape_ocpus
+  admin_instance_memory     = var.admin_instance_shape_memory
+  redis_version             = var.redis_version
+  redis_prefix              = var.redis_prefix
+  redis_port                = var.redis_port
+  redis_ocpus               = var.redis_flex_shape_ocpus
+  redis_memory              = var.redis_flex_shape_memory
+  redis_port2               = var.redis_port2
+  sentinel_port             = var.sentinel_port
+
+
 }
+

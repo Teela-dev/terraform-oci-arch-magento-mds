@@ -14,11 +14,13 @@ if [[ $use_shared_storage == "true" ]]; then
   echo "NFS share mounted."
   cd ${magento_shared_working_dir}
 else
-  echo "No mount NFS share. Moving to /var/www/html" 
-  cd /var/www/html	
+  echo "No mount NFS share. Moving to /var/www/html"
+  cd /var/www/html
 fi
 
-magento_version=$(curl -s https://github.com/magento/magento2/releases/latest | grep -Po 'tag/\K.*' | cut -d'"' -f1)
+#magento_version=$(curl -s https://github.com/magento/magento2/releases/latest | grep -Po 'tag/\K.*' | cut -d'"' -f1)
+magento_version=${magento_version}
+
 wget https://github.com/magento/magento2/archive/$magento_version.tar.gz
 
 if [[ $use_shared_storage == "true" ]]; then
@@ -31,7 +33,7 @@ else
   cp -r /var/www/html/magento2-$magento_version/* /var/www/html
   rm -rf /var/www/html/magento2-$magento_version
   rm -rf /var/www/html/$magento_version.tar.gz
-fi 
+fi
 
 if [[ $use_shared_storage == "true" ]]; then
   echo "... Changing /etc/httpd/conf/httpd.conf with Document set to new shared NFS space ..."
@@ -55,8 +57,8 @@ chmod +x composer-1.phar
 mv composer-1.phar composer
 
 if [[ $use_shared_storage == "true" ]]; then
-  cd ${magento_shared_working_dir}   
-else 
+  cd ${magento_shared_working_dir}
+else
   cd /var/www/html
 fi
 /usr/local/bin/composer install
@@ -72,12 +74,12 @@ if [[ $use_shared_storage == "true" ]]; then
   cp /home/opc/index.html ${magento_shared_working_dir}/index.html
   rm /home/opc/index.html
   chown apache:apache -R ${magento_shared_working_dir}
-else 
+else
   /var/www/html/bin/magento setup:install --no-ansi --db-host ${mds_ip}  --db-name ${magento_schema} --db-user ${magento_name} --db-password '${magento_password}' --admin-firstname='${magento_admin_firstname}' --admin-lastname='${magento_admin_lastname}' --admin-user='${magento_admin_login}' --admin-password='${magento_admin_password}' --admin-email='${magento_admin_email}'
   /var/www/html/bin/magento config:set web/unsecure/base_url http://${public_ip}/
   /var/www/html/bin/magento config:set web/secure/base_url https://${public_ip}/
   /var/www/html/bin/magento config:set web/secure/use_in_frontend 1
-  /var/www/html/bin/magento config:set web/secure/use_in_adminhtml 0  
+  /var/www/html/bin/magento config:set web/secure/use_in_adminhtml 0
   chown apache:apache -R /var/www/html
 fi
 

@@ -57,12 +57,61 @@ variable "node_flex_shape_ocpus" {
 
 variable "node_flex_shape_memory" {
   description = "Flex Instance shape Memory (GB)"
-  default = 6
+  default = 8
+}
+
+variable "admin_instance_shape" {
+   description = "Instance shape to use for master instance. "
+   default     = "VM.Standard.E4.Flex"
+}
+
+variable "admin_instance_shape_ocpus" {
+  description = "Flex Admin Instance shape OCPUs"
+  default = 4
+}
+
+variable "admin_instance_shape_memory" {
+  description = "Flex Admin Instance shape Memory (GB)"
+  default = 32
+}
+
+variable "elastic_search_instance_shape" {
+  default = "VM.Standard.A1.Flex"
+}
+
+variable "elastic_search_flex_shape_ocpus" {
+  description = "Flex Search Instance shape OCPUs"
+  default = 2
+}
+
+variable "elastic_search_flex_shape_memory" {
+  description = "Flex Search Instance shape Memory (GB)"
+  default = 16
+}
+
+variable "rabbitmq_flex_shape_ocpus" {
+  description = "Flex Rabbitmq shape OCPUs"
+  default = 1
+}
+
+variable "rabbitmq_flex_shape_memory" {
+  description = "Flex Rabbitmq shape Memory (GB)"
+  default = 4
+}
+
+variable "varnish_flex_shape_ocpus" {
+  description = "Flex Varnish shape OCPUs"
+  default = 1
+}
+
+variable "varnish_flex_shape_memory" {
+  description = "Flex Varnish shape Memory (GB)"
+  default = 4
 }
 
 variable "label_prefix" {
   description = "To create unique identifier for multiple setup in a compartment."
-  default     = ""
+  default     = "Teeela"
 }
 
 variable "lb_shape" {
@@ -126,6 +175,11 @@ variable "mysql_shape" {
     default = "MySQL.VM.Standard.E3.1.8GB"
 }
 
+variable "magento_version" {
+  description = "Magento Version."
+  default     = 2.4.6
+}
+
 variable "magento_name" {
   description = "Magento Database User Name."
   default     = "magento"
@@ -156,7 +210,7 @@ variable "mysql_is_highly_available" {
 }
 
 variable "mysql_db_system_data_storage_size_in_gb" {
-  default = 50
+  default = 200
 }
 
 variable "mysql_db_system_description" {
@@ -172,13 +226,13 @@ variable "mysql_db_system_display_name" {
 variable "mysql_db_system_fault_domain" {
   description = "The fault domain on which to deploy the Read/Write endpoint. This defines the preferred primary instance."
   default = "FAULT-DOMAIN-1"
-}                  
+}
 
 variable "mysql_db_system_hostname_label" {
   description = "The hostname for the primary endpoint of the DB System. Used for DNS. The value is the hostname portion of the primary private IP's fully qualified domain name (FQDN) (for example, dbsystem-1 in FQDN dbsystem-1.subnet123.vcn1.oraclevcn.com). Must be unique across all VNICs in the subnet and comply with RFC 952 and RFC 1123."
   default = "magentoMDS"
 }
-   
+
 variable "mysql_db_system_maintenance_window_start_time" {
   description = "The start of the 2 hour maintenance window. This string is of the format: {day-of-week} {time-of-day}. {day-of-week} is a case-insensitive string like mon, tue, etc. {time-of-day} is the Time portion of an RFC3339-formatted timestamp. Any second or sub-second time data will be truncated to zero."
   default = "SUNDAY 14:30"
@@ -205,4 +259,66 @@ variable "numberOfNodes" {
 variable "use_shared_storage" {
   description = "Decide if you want to use shared NFS on OCI FSS"
   default     = true
+}
+
+variable "elastic_search_download_url" {
+  default = "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch"
+}
+
+variable "elastic_search_download_version" {
+  default = "7.17.13"
+}
+
+variable "kibana_download_url" {
+  default = "https://artifacts.elastic.co/downloads/kibana/kibana"
+}
+
+variable "kibana_download_version" {
+  default = "7.17.13"
+}
+
+variable "logstash_download_url" {
+  default = "https://artifacts.elastic.co/downloads/logstash/logstash"
+}
+
+variable "logstash_download_version" {
+  default = "7.17.13"
+}
+
+variable "KibanaPort" {
+  default = "5601"
+}
+
+variable "ESDataPort" {
+  default = "9200"
+}
+
+variable "redis_prefix" {
+  default = "redis"
+}
+
+variable "redis_version" {
+  default = "7.0"
+}
+
+variable "redis_port" {
+  default = "6379"
+}
+
+variable "redis_port2" {
+  default = "16379"
+}
+
+variable "sentinel_port" {
+  default = "26379"
+}
+
+variable "redis_flex_shape_memory" {
+  description = "Flex Search Instance shape Memory (GB)"
+  default = 6
+}
+
+variable "redis_flex_shape_ocpus" {
+  description = "Flex Rabbitmq shape OCPUs"
+  default = 1
 }
